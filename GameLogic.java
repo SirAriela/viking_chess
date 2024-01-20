@@ -7,6 +7,11 @@ public class GameLogic implements PlayableLogic {
     private boolean isAttackerNow;
     private boolean isGameFinished;
 
+    public GameLogic(){
+        this.board = new ConcretePiece[BOARD_SIZE][BOARD_SIZE];
+        this.reset();
+    }
+
     public int getDistance(Position a, Position b) {
         return Math.abs(a.getpositionX() - b.getpositionX() + a.getpositionY() - b.getpositionY());
     }
@@ -64,7 +69,7 @@ public class GameLogic implements PlayableLogic {
     public Piece getPieceAtPosition(Position position) {
        int x = position.getpositionX();
        int y = position.getpositionY();
-       return board[x][y];
+       return this.board[x][y];
     }
 
     @Override
@@ -91,26 +96,9 @@ public class GameLogic implements PlayableLogic {
     public void reset() {
         attacker = new ConcretePlayer(true);
         defender = new ConcretePlayer(false);
-        board = new ConcretePiece[BOARD_SIZE][BOARD_SIZE];
         locations = new int[BOARD_SIZE][BOARD_SIZE];
         isAttackerNow = true;
         isGameFinished = false;
-
-        for(int i=0; i<getBoardSize();i++){
-            for(int j=0; j<getBoardSize();j++){
-                board[i][j] = new ConcretePiece() {
-                    @Override
-                    public Player getOwner() {
-                        return null;
-                    }
-
-                    @Override
-                    public String getType() {
-                        return null;
-                    }
-                };
-            }
-        }
 
         //attacker pawns
         int pawnNumber = 1;
