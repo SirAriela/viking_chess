@@ -1,15 +1,17 @@
 public abstract class ConcretePiece  implements Piece  {
    // private Player owner;
     //private String typeOfPiece;
-    public ConcretePiece(){
-    }
-//    Player getOwner(){
-//
-//    }
-//
-//    String getType(){
-//
-//    }
+   protected Player owner;
+    protected int eatenPieces = 0;
 
+        //private String typeOfPiece;
+    public ConcretePiece(){
+        }
+        public Player getOwner(){
+            return this.owner;
+        }
+
+        public void upDateEatenPieces(){
+}
 
 }

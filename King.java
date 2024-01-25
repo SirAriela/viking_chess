@@ -9,7 +9,7 @@ public class King extends ConcretePiece {
     private int distance;
 
     public King(ConcretePlayer owner, Position position) {
-        this.owner =owner;
+        this.owner = owner;
         this.currentPosition = position;
         this.locations = new ArrayList<Position>();
         locations.add(position);
@@ -17,10 +17,12 @@ public class King extends ConcretePiece {
     }
 
     public void upDatePositions(Position position) {
-        currentPosition = position;
-        locations.add(position);
+        this.currentPosition = position;
+        this.locations.add(position);
     }
-
+    public  Position getCurrentPosition(){
+        return currentPosition;
+    }
     public void upDateDistance(int distance) {
         distance += distance;
     }
@@ -33,6 +35,7 @@ public class King extends ConcretePiece {
         return locations;
 
     }
+
 
     @Override
     public ConcretePlayer getOwner() {

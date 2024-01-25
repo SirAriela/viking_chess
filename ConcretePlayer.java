@@ -14,6 +14,9 @@ public class ConcretePlayer implements Player {
         return this.isPlayerOne;
     }
 
+    public void updateWins(){
+        this.wins++;
+    }
     @Override
     public int getWins() {
         // TODO Auto-generated method stub
