@@ -28,7 +28,7 @@ public class GameLogic implements PlayableLogic {
         int bYposition = b.getpositionY();
 
         //if there is a piece
-        if (getPieceAtPosition(b)!= null)
+        if (getPieceAtPosition(b) != null)
             return false;
         //same place
         if (aXposition == bXposition && aYposition == bYposition)
@@ -65,7 +65,7 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public boolean move(Position a, Position b) {
-        if(board[a.getpositionX()][a.getpositionY()].getOwner().isPlayerOne() == isAttackerNow){
+        if (board[a.getpositionX()][a.getpositionY()].getOwner().isPlayerOne() == isAttackerNow) {
             if (legalMoovement(a, b)) {
 
                 if (board[a.getpositionX()][a.getpositionY()] instanceof Pawn) {
@@ -95,13 +95,13 @@ public class GameLogic implements PlayableLogic {
                 }
                 isAttackerNow = !isAttackerNow;
                 this.losingCheck();
+                this.eatingCheck(board[b.getpositionX()][b.getpositionY()], b);
                 return true;
             }
 
 
         }
         //check if ConcretePiece has eaten another piece in Position b and increasing eatenPieces field
- //         this.eatingCheck(board[b.getpositionX()][b.getpositionY()], b);
 
 
         return false;
@@ -119,56 +119,106 @@ public class GameLogic implements PlayableLogic {
     }
 
 
-    public void eatingCheck (ConcretePiece piece, Position a) {
-        int xPiece= a.getpositionX();
-        int yPiece= a.getpositionY();
-        int[] suspicious = new int [8];
-        suspicious[0]=  yPiece-1; // yOneDown
-        suspicious[1] = yPiece-2; //yTwoDown
-        suspicious[2] = yPiece+1;// yOneUp
-        suspicious[3] = yPiece+2; //yTwoUp
-        suspicious[4]= xPiece-1; //xOneLeft
-        suspicious[5]= xPiece-2; // xTwoLeft
-        suspicious[6]= xPiece+1; //xOneRight
-        suspicious[7]= xPiece+2; // xTwoRight
+
+    public void eatingCheck(ConcretePiece piece, Position a) {
+        int xPiece = a.getpositionX();
+        int yPiece = a.getpositionY();
+
+        int yOneDown = yPiece - 1; // yOneDown
+        int xOneLeft = xPiece - 1; //xOneLeft
+        int yOneUp = yPiece + 1;// yOneUp
+        int xOneRight = xPiece + 1; //xOneRight
 
 
 
-        //case 1: eating from right/left
-        for(int i=4;i<=7;i+=2)
-            if(insideBoard(i,yPiece)) {
-                if(!insideBoard(i+1,yPiece)&&board[i][yPiece]!= null ) {
-                    if (board[i][yPiece].getOwner()!= piece.getOwner()) {
+
+            //case 1: eating from right:
+
+            if (insideBoard(xOneRight, yPiece) && !(board[xOneRight][yPiece] instanceof King)) {
+                if (!insideBoard(xOneRight + 1, yPiece) && board[xOneRight][yPiece] != null) {
+                    if (board[xOneRight][yPiece].getOwner() != piece.getOwner()) {
                         piece.upDateEatenPieces();
-                        board[i][yPiece]= null;}}
-                if(insideBoard(i+1,yPiece) && board[i][yPiece]!= null && board[i+1][yPiece]!=null ) {
-                    if (board[i][yPiece].getOwner()!= piece.getOwner() && (board[i+1][yPiece].getOwner()== piece.getOwner()
-                    )){
+                        board[xOneRight][yPiece] = null;
+                    }
+                }
+                if (insideBoard(xOneRight + 1, yPiece) && board[xOneRight][yPiece] != null && board[xOneRight + 1][yPiece] != null) {
+                    if (board[xOneRight][yPiece].getOwner() != piece.getOwner() && (board[xOneRight + 1][yPiece].getOwner() == piece.getOwner()
+                    )) {
                         piece.upDateEatenPieces();
-                        board[i][yPiece]= null;
-                    }}
-                if(this.isEdge(i+1, yPiece)&& board[i][yPiece]!= null && board[i][yPiece].getOwner()!=piece.getOwner()) {
+                        board[xOneRight][yPiece] = null;
+                    }
+                }
+                if (this.isEdge(xOneRight + 1, yPiece) && board[xOneRight][yPiece] != null && board[xOneRight][yPiece].getOwner() != piece.getOwner()) {
                     piece.upDateEatenPieces();
-                    board[i][yPiece]= null;
-                }}
-        // case 2: eating from up/down
-        for(int i=0;i<4;i+=2) {
-            if(insideBoard(xPiece,i)) {
-                if(!insideBoard(xPiece,i+1)&& board[xPiece][i]!= null ) {
-                    if (board[xPiece][i].getOwner()!= piece.getOwner()){
+                    board[xOneRight][yPiece] = null;
+                }
+            }
+
+            //case 2: eating from left:
+
+            if (insideBoard(xOneLeft, yPiece) && !(board[xOneLeft][yPiece] instanceof King)) {
+                if (!insideBoard(xOneLeft - 1, yPiece) && board[xOneLeft][yPiece] != null) {
+                    if (board[xOneLeft][yPiece].getOwner() != piece.getOwner()) {
                         piece.upDateEatenPieces();
-                        board[xPiece][i]= null;}}
-                if(insideBoard(xPiece,i+1) && board[xPiece][i]!= null && board[xPiece][i+1]!=null ) {
-                    if (board[xPiece][i].getOwner()!= piece.getOwner() && (board[xPiece][i+1].getOwner()== piece.getOwner()
-                    )){
+                        board[xOneLeft][yPiece] = null;
+                    }
+                }
+                if (insideBoard(xOneLeft - 1, yPiece) && board[xOneLeft][yPiece] != null && board[xOneLeft - 1][yPiece] != null) {
+                    if (board[xOneLeft][yPiece].getOwner() != piece.getOwner() && (board[xOneLeft - 1][yPiece].getOwner() == piece.getOwner()
+                    )) {
                         piece.upDateEatenPieces();
-                        board[xPiece][i]= null;
-                    }}
-                if(this.isEdge(xPiece, i+1)&& board[xPiece][i]!= null && board[xPiece][i].getOwner()!=piece.getOwner()) {
+                        board[xOneLeft][yPiece] = null;
+                    }
+                }
+                if (this.isEdge(xOneLeft - 1, yPiece) && board[xOneLeft][yPiece] != null && board[xOneLeft][yPiece].getOwner() != piece.getOwner()) {
                     piece.upDateEatenPieces();
-                    board[xPiece][i]= null;
-    		}}
-	}}
+                    board[xOneLeft][yPiece] = null;
+                }
+            }
+            // case 3: eating from down:
+
+            if (insideBoard(xPiece, yOneDown) && !(board[xPiece][yOneDown] instanceof King)) {
+                if (!insideBoard(xPiece, yOneDown - 1) && board[xPiece][yOneDown] != null) {
+                    if (board[xPiece][yOneDown].getOwner() != piece.getOwner()) {
+                        piece.upDateEatenPieces();
+                        board[xPiece][yOneDown] = null;
+                    }
+                }
+                if (insideBoard(xPiece, yOneDown - 1) && board[xPiece][yOneDown] != null && board[xPiece][yOneDown - 1] != null) {
+                    if (board[xPiece][yOneDown].getOwner() != piece.getOwner() && (board[xPiece][yOneDown - 1].getOwner() == piece.getOwner()
+                    )) {
+                        piece.upDateEatenPieces();
+                        board[xPiece][yOneDown] = null;
+                    }
+                }
+                if (this.isEdge(xPiece, yOneDown - 1) && board[xPiece][yOneDown] != null && board[xPiece][yOneDown].getOwner() != piece.getOwner()) {
+                    piece.upDateEatenPieces();
+                    board[xPiece][yOneDown] = null;
+                }
+            }
+            // case 4: eating from up:
+
+            if (insideBoard(xPiece, yOneUp) && !(board[xPiece][yOneUp] instanceof King)) {
+                if (!insideBoard(xPiece, yOneUp + 1) && board[xPiece][yOneUp] != null) {
+                    if (board[xPiece][yOneUp].getOwner() != piece.getOwner()) {
+                        piece.upDateEatenPieces();
+                        board[xPiece][yOneUp] = null;
+                    }
+                }
+                if (insideBoard(xPiece, yOneUp + 1) && board[xPiece][yOneUp] != null && board[xPiece][yOneUp + 1] != null) {
+                    if (board[xPiece][yOneUp].getOwner() != piece.getOwner() && (board[xPiece][yOneUp + 1].getOwner() == piece.getOwner()
+                    )) {
+                        piece.upDateEatenPieces();
+                        board[xPiece][yOneUp] = null;
+                    }
+                }
+                if (this.isEdge(xPiece, yOneUp + 1) && board[xPiece][yOneUp] != null && board[xPiece][yOneUp].getOwner() != piece.getOwner()) {
+                    piece.upDateEatenPieces();
+                    board[xPiece][yOneUp] = null;
+                }
+            }
+
+    }
 
     private boolean insideBoard(int x, int y) {
         return x >= 0 && x < this.getBoardSize() && y >= 0 && y < this.getBoardSize();
@@ -180,40 +230,40 @@ public class GameLogic implements PlayableLogic {
         int kingX = kingPosition.getpositionX();
         int kingY = kingPosition.getpositionY();
 
-        if(kingX - 1 >=0 && kingX + 1 < this.getBoardSize() && kingY - 1 >=0 && kingY + 1 < this.getBoardSize())
-        {
-            if(board[kingX][kingY-1] instanceof Pawn){
-                if(board[kingX][kingY-1].getOwner().isPlayerOne()) {
+        if (kingX - 1 >= 0 && kingX + 1 < this.getBoardSize() && kingY - 1 >= 0 && kingY + 1 < this.getBoardSize()) {
+            if (board[kingX][kingY - 1] instanceof Pawn) {
+                if (board[kingX][kingY - 1].getOwner().isPlayerOne() == true) {
                     numOfThreats++;
                 }
             }
-            if(board[kingX][kingY+1] instanceof Pawn) {
+            if (board[kingX][kingY + 1] instanceof Pawn) {
                 if (board[kingX][kingY + 1].getOwner().isPlayerOne())
                     numOfThreats++;
             }
-            if(board[kingX-1][kingY] instanceof Pawn) {
+            if (board[kingX - 1][kingY] instanceof Pawn) {
                 if (board[kingX - 1][kingY].getOwner().isPlayerOne())
                     numOfThreats++;
             }
-            if(board[kingX+1][kingY] instanceof Pawn) {
+            if (board[kingX + 1][kingY] instanceof Pawn) {
                 if (board[kingX + 1][kingY].getOwner().isPlayerOne())
                     numOfThreats++;
             }
         }
-        
+
         if (numOfThreats == 4) {
             this.isGameFinished = true;
             attacker.updateWins();
             this.reset();
 
         }
+        //add corners
     }
 
     private Position getKingPosition() {
-        for(int i=0; i<this.getBoardSize(); i++){
-            for(int j=0; j<this.getBoardSize(); j++){
-                if(board[i][j] instanceof King)
-                    return new Position(i,j);
+        for (int i = 0; i < this.getBoardSize(); i++) {
+            for (int j = 0; j < this.getBoardSize(); j++) {
+                if (board[i][j] instanceof King)
+                    return new Position(i, j);
             }
         }
         return null;
@@ -261,11 +311,11 @@ public class GameLogic implements PlayableLogic {
             board[i][0] = new Pawn(attacker, new Position(i, 0), pawnNumber);
             pawnNumber++;
         }
-        board[5][1]= new Pawn(attacker, new Position(5,1), pawnNumber);
+        board[5][1] = new Pawn(attacker, new Position(5, 1), pawnNumber);
         pawnNumber++;
         board[0][3] = new Pawn(attacker, new Position(0, 3), pawnNumber);
         pawnNumber++;
-        board[10][3] = new Pawn(attacker, new Position(10,3), pawnNumber);
+        board[10][3] = new Pawn(attacker, new Position(10, 3), pawnNumber);
         pawnNumber++;
         board[0][4] = new Pawn(attacker, new Position(0, 4), pawnNumber);
         pawnNumber++;
@@ -285,17 +335,17 @@ public class GameLogic implements PlayableLogic {
         pawnNumber++;
         board[0][7] = new Pawn(attacker, new Position(0, 7), pawnNumber);
         pawnNumber++;
-        board[10][7] = new Pawn(attacker, new Position(10,7), pawnNumber);
+        board[10][7] = new Pawn(attacker, new Position(10, 7), pawnNumber);
         pawnNumber++;
         board[5][9] = new Pawn(attacker, new Position(5, 9), pawnNumber);
         pawnNumber++;
-        for (int i = 3; i < 7; i++) {
+        for (int i = 3; i <= 7; i++) {
             board[i][10] = new Pawn(attacker, new Position(i, 0), pawnNumber);
             pawnNumber++;
         }
 
         //defender pieces
-        board[5][5] =  new King(defender, new Position(5, 5));
+        board[5][5] = new King(defender, new Position(5, 5));
         pawnNumber = 1;
         board[5][3] = new Pawn(defender, new Position(5, 3), pawnNumber);
         pawnNumber++;
@@ -303,7 +353,7 @@ public class GameLogic implements PlayableLogic {
         pawnNumber++;
         board[5][4] = new Pawn(defender, new Position(5, 4), pawnNumber);
         pawnNumber++;
-        board[6][4]= new Pawn(defender, new Position(6, 4), pawnNumber);
+        board[6][4] = new Pawn(defender, new Position(6, 4), pawnNumber);
         pawnNumber++;
         board[3][5] = new Pawn(defender, new Position(3, 5), pawnNumber);
         pawnNumber++;
@@ -328,8 +378,8 @@ public class GameLogic implements PlayableLogic {
                     locations[i][j] = 1;
             }
 
+        }
     }
-}
 
 
     @Override
