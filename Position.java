@@ -3,6 +3,7 @@ public class Position {
     private int y;
 
 
+
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
@@ -20,6 +21,11 @@ public class Position {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+
+    public String toString(){
+        return "(" + this.getpositionX() +"," + this.getpositionY() + ")";
     }
 
 

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Pawn extends ConcretePiece {
 
@@ -43,9 +44,27 @@ public class Pawn extends ConcretePiece {
         distance += distance;
     }
 
-
+public void typeAndNumber(){
+        if(this.getOwner().isPlayerOne()){
+            System.out.print("A" + this.pawnNumber + ":");
+        }
+        else  System.out.print("D" + this.pawnNumber + ":");
+}
     public ArrayList<Position> getList() {
         return locations;
 
+    }
+    void printLocations(){
+        typeAndNumber();
+        System.out.print(" [");
+        Iterator i = locations.iterator();
+        while(i.hasNext()){
+            Position p= (Position)i.next();
+            System.out.print(p.toString());
+            if(!(i.toString().compareTo((locations.get(locations.size()-1)).toString()) == 0)){
+                System.out.print(",");
+            }
+        }
+        System.out.println("]");
     }
 }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class King extends ConcretePiece {
     private ConcretePlayer owner;
@@ -19,6 +20,22 @@ public class King extends ConcretePiece {
     public void upDatePositions(Position position) {
         this.currentPosition = position;
         this.locations.add(position);
+    }
+    public void typeAndNumber(){
+        System.out.print("K7:");
+    }
+    void printLocations(){
+        typeAndNumber();
+        System.out.print(" [");
+        Iterator i = locations.iterator();
+        while(i.hasNext()){
+            Position p= (Position)i.next();
+            System.out.print(p.toString());
+            if(!(i.toString().compareTo((locations.get(locations.size()-1)).toString()) == 0)){
+                System.out.print(",");
+            }
+        }
+        System.out.println("]");
     }
     public  Position getCurrentPosition(){
         return currentPosition;
