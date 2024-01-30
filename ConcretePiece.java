@@ -6,12 +6,16 @@ public abstract class ConcretePiece  implements Piece  {
 
         //private String typeOfPiece;
     public ConcretePiece(){
+        this.eatenPieces = 0;
         }
         public Player getOwner(){
             return this.owner;
         }
 
         public void upDateEatenPieces(){
-}
-
+            eatenPieces++;
+    }
+    public int getEatenPieces(){
+        return this.eatenPieces;
+    }
 }

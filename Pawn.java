@@ -6,7 +6,6 @@ public class Pawn extends ConcretePiece {
     private ConcretePlayer owner;
     private Position currentPosition;
     private ArrayList<Position> locations;
-    private static int eatenPieces = 0;
     private int distance;
     private int pawnNumber;
 
@@ -26,10 +25,6 @@ public class Pawn extends ConcretePiece {
         locations.add(position);
     }
 
-    public void upDateEatenPieces() {
-        eatenPieces++;
-    }
-
 
     @Override
     public ConcretePlayer getOwner() {
@@ -41,30 +36,42 @@ public class Pawn extends ConcretePiece {
     }
 
     public void upDateDistance(int distance) {
-        distance += distance;
+        this.distance += distance;
     }
 
-public void typeAndNumber(){
-        if(this.getOwner().isPlayerOne()){
+    public int getDistance() {
+        return this.distance;
+    }
+
+    public void typeAndNumber() {
+        if (this.getOwner().isPlayerOne()) {
             System.out.print("A" + this.pawnNumber + ":");
-        }
-        else  System.out.print("D" + this.pawnNumber + ":");
-}
+        } else System.out.print("D" + this.pawnNumber + ":");
+    }
+
     public ArrayList<Position> getList() {
         return locations;
 
     }
-    void printLocations(){
+
+    void printLocations() {
         typeAndNumber();
         System.out.print(" [");
         Iterator i = locations.iterator();
-        while(i.hasNext()){
-            Position p= (Position)i.next();
+        int n = locations.size();
+        Position last = (Position) locations.get(n - 1);
+        while (i.hasNext()) {
+            Position p = (Position) i.next();
             System.out.print(p.toString());
-            if(!(i.toString().compareTo((locations.get(locations.size()-1)).toString()) == 0)){
+            if (!p.toString().equals(last.toString())) {
                 System.out.print(",");
             }
         }
         System.out.println("]");
+    }
+
+    void printDistance() {
+        typeAndNumber();
+        System.out.println(" " + getDistance() + " squares");
     }
 }

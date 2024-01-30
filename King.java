@@ -6,7 +6,7 @@ public class King extends ConcretePiece {
 
     private Position currentPosition;
     private ArrayList<Position> locations;
-    private static int eatenPieces = 0;
+
     private int distance;
 
     public King(ConcretePlayer owner, Position position) {
@@ -21,32 +21,35 @@ public class King extends ConcretePiece {
         this.currentPosition = position;
         this.locations.add(position);
     }
-    public void typeAndNumber(){
+
+    public void typeAndNumber() {
         System.out.print("K7:");
     }
-    void printLocations(){
+
+    void printLocations() {
         typeAndNumber();
         System.out.print(" [");
         Iterator i = locations.iterator();
-        while(i.hasNext()){
-            Position p= (Position)i.next();
+        int n = locations.size();
+        Position last = (Position) locations.get(n - 1);
+        while (i.hasNext()) {
+            Position p = (Position) i.next();
             System.out.print(p.toString());
-            if(!(i.toString().compareTo((locations.get(locations.size()-1)).toString()) == 0)){
+            if (!p.toString().equals(last.toString())) {
                 System.out.print(",");
             }
         }
         System.out.println("]");
     }
-    public  Position getCurrentPosition(){
+
+    public Position getCurrentPosition() {
         return currentPosition;
     }
+
     public void upDateDistance(int distance) {
-        distance += distance;
+        this.distance += distance;
     }
 
-    public void upDateEatenPieces() {
-        eatenPieces++;
-    }
 
     public ArrayList<Position> getList() {
         return locations;
@@ -62,5 +65,14 @@ public class King extends ConcretePiece {
     @Override
     public String getType() {
         return "♕";
+    }
+
+    public int getDistance() {
+        return this.distance;
+    }
+
+    void printDistance() {
+        typeAndNumber();
+        System.out.println(" " + getDistance() + " squares");
     }
 }
