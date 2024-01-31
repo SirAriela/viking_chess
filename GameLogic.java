@@ -15,8 +15,8 @@ public class GameLogic implements PlayableLogic {
 
     public GameLogic() {
         this.board = new ConcretePiece[BOARD_SIZE][BOARD_SIZE];
-        attacker = new ConcretePlayer(true);
-        defender = new ConcretePlayer(false);
+        attacker = new ConcretePlayer(false);
+        defender = new ConcretePlayer(true);
         this.reset();
     }
 
@@ -120,6 +120,45 @@ public class GameLogic implements PlayableLogic {
         assert posOfKing != null;
         King k = (King)board[posOfKing.getpositionX()][posOfKing.getpositionY()];
 
+        Comparator<ConcretePiece> comparetorbyName = new Comparator<ConcretePiece>() {
+            @Override
+            public int compare(ConcretePiece piece1, ConcretePiece piece2) {
+                int ans = 0;
+                if (piece1 instanceof Pawn && piece2 instanceof Pawn) {
+                    Pawn temp1 = (Pawn) piece1;
+                    Pawn temp2 = (Pawn) piece2;
+                    if (temp1.getPawnNumber() > temp2.getPawnNumber())
+                        ans = 1;
+                    if (temp1.getPawnNumber() < temp2.getPawnNumber())
+                        ans = -1;
+
+                }
+
+                if (piece1 instanceof King && piece2 instanceof Pawn) {
+                    King temp1 = (King) piece1;
+                    Pawn temp2 = (Pawn) piece2;
+                    if (temp1.getPawnNumber() > temp2.getPawnNumber())
+                        ans = 1;
+                    if (temp1.getPawnNumber() < temp2.getPawnNumber())
+                        ans = -1;
+
+                }
+
+                if (piece1 instanceof Pawn && piece2 instanceof King) {
+                    Pawn temp1 = (Pawn) piece1;
+                    King temp2 = (King) piece2;
+                    if (temp1.getPawnNumber() > temp2.getPawnNumber())
+                        ans = 1;
+                    if (temp1.getPawnNumber() < temp2.getPawnNumber())
+                        ans = -1;
+
+                }
+                return ans;
+            }
+
+        };
+
+
         Comparator<ConcretePiece> comparetorbySizeOFLocations = new Comparator<ConcretePiece>() {
             @Override
             public int compare(ConcretePiece piece1, ConcretePiece piece2) {
@@ -189,6 +228,21 @@ public class GameLogic implements PlayableLogic {
             }
         };
 
+        Comparator<Position> comparetorNumberOfPiece = new Comparator<Position>() {
+            @Override
+            public int compare(Position position1, Position position2) {
+                int ans = 0;
+                if(locations[position1.getpositionX()][position1.getpositionY()] < locations[position2.getpositionX()][position2.getpositionY()]){
+                    ans =1;
+                }
+                if(locations[position1.getpositionX()][position1.getpositionY()] > locations[position2.getpositionX()][position2.getpositionY()]){
+                    ans =-1;
+                }
+                return ans;
+
+            }
+        };
+
         ArrayList<ConcretePiece> winner = new ArrayList<>();
         ArrayList<ConcretePiece> loser = new ArrayList<>();
 
@@ -210,12 +264,14 @@ public class GameLogic implements PlayableLogic {
 
         }
 
+        winner.sort(comparetorbyName);
         winner = returnSizeBiggerThan2(winner);
         winner.sort(comparetorbySizeOFLocations);
         if(!whoIsWinner){
             winner.add(k);
         }
 
+        loser.sort(comparetorbyName);
         loser =  returnSizeBiggerThan2(loser);
         loser.sort(comparetorbySizeOFLocations);
         if(whoIsWinner){
@@ -244,7 +300,8 @@ public class GameLogic implements PlayableLogic {
             }
         }
         printcohav();
-        all.add(k);
+
+        all.add(0,k);
         all.sort(compareByKills);
         for (ConcretePiece temp : all) {
             if(temp.getEatenPieces() > 0) {
@@ -264,7 +321,6 @@ public class GameLogic implements PlayableLogic {
 
         printcohav();
 
-        all.add(k);
         all = returnDistanceBiggerthanZero(all);
         all.sort(comparetorDistance);
 
@@ -280,14 +336,23 @@ public class GameLogic implements PlayableLogic {
         }
         printcohav();
 
+        ArrayList<Position> positions = new ArrayList<>();
         for(int i = 0;i<BOARD_SIZE;i++){
             for(int j=0; j<BOARD_SIZE; j++){
                 if(locations[i][j] > 1){
-                    System.out.println(new Position(i,j).toString() +locations[i][j]+ " pieces" );
+                    positions.add(new Position(i,j));
                 }
 
             }
         }
+
+        positions.sort(comparetorNumberOfPiece);
+
+        for (Position temp : positions) {
+                System.out.println(temp.toString()+ locations[temp.getpositionX()][temp.getpositionY()] +" pieces");
+        }
+
+
         printcohav();
 
     }
@@ -302,24 +367,25 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public boolean move(Position a, Position b) {
-        if (board[a.getpositionX()][a.getpositionY()].getOwner().isPlayerOne() == isAttackerNow) {
+        if (!board[a.getpositionX()][a.getpositionY()].getOwner().isPlayerOne() == isAttackerNow) {
             if (legalMoovement(a, b)) {
 
 
                 if (board[a.getpositionX()][a.getpositionY()] instanceof Pawn) {
                     Pawn temp = (Pawn) board[a.getpositionX()][a.getpositionY()];
-                    ArrayList<Position> tempLocations= temp.getList();
+
+                    ArrayList<Position> tempLocations = temp.getList();
                     Iterator i = tempLocations.iterator();
                     boolean flag = false;
                     while(i.hasNext()){
                         Position current = (Position) i.next();
                         if(current.getpositionX() == b.getpositionX() && current.getpositionY() == b.getpositionY()){
                             flag = true;
-                            break;
                         }
                     }
-                    if(!flag) locations[b.getpositionX()][b.getpositionY()]++;
-
+                    if(!flag) {
+                        locations[b.getpositionX()][b.getpositionY()]++;
+                    }
                     int distance = getDistance(a, b);
                     temp.upDateDistance(distance);
                     temp.upDatePositions(b);
@@ -339,10 +405,11 @@ public class GameLogic implements PlayableLogic {
                         Position current = (Position) i.next();
                         if(current.getpositionX() == b.getpositionX() && current.getpositionY() == b.getpositionY()){
                             flag = true;
-                            break;
                         }
                     }
-                    if(!flag) locations[b.getpositionX()][b.getpositionY()]++;
+                    if(!flag) {
+                        locations[b.getpositionX()][b.getpositionY()]++;
+                    }
                     int distance = getDistance(a, b);
                     temp.upDateDistance(distance);
                     temp.upDatePositions(b);
@@ -354,8 +421,7 @@ public class GameLogic implements PlayableLogic {
                     if (isEdge(b.getpositionX(), b.getpositionY())) {// means the king get to the edge and defenders won
                         isGameFinished = true;
                         defender.updateWins();
-                        printStats(false);
-                        this.reset();
+                        printStats(defender.isPlayerOne());
                     }
 
                 }
@@ -368,7 +434,6 @@ public class GameLogic implements PlayableLogic {
 
 
         }
-        //check if ConcretePiece has eaten another piece in Position b and increasing eatenPieces field
 
 
         return false;
@@ -399,7 +464,9 @@ public class GameLogic implements PlayableLogic {
 
 
 
+        if(piece instanceof Pawn) {
             //case 1: eating from right:
+
 
             if (insideBoard(xOneRight, yPiece) && !(board[xOneRight][yPiece] instanceof King)) {
                 if (!insideBoard(xOneRight + 1, yPiece) && board[xOneRight][yPiece] != null) {
@@ -484,7 +551,7 @@ public class GameLogic implements PlayableLogic {
                     board[xPiece][yOneUp] = null;
                 }
             }
-
+        }
     }
 
     private boolean insideBoard(int x, int y) {
@@ -499,51 +566,50 @@ public class GameLogic implements PlayableLogic {
 
         if (kingX - 1 >= 0 && kingX + 1 < this.getBoardSize() && kingY - 1 >= 0 && kingY + 1 < this.getBoardSize()) {
             if (board[kingX][kingY - 1] instanceof Pawn) {
-                if (board[kingX][kingY - 1].getOwner().isPlayerOne()) {
+                if (!board[kingX][kingY - 1].getOwner().isPlayerOne()) {
                     numOfThreats++;
                 }
             }
             if (board[kingX][kingY + 1] instanceof Pawn) {
-                if (board[kingX][kingY + 1].getOwner().isPlayerOne())
+                if (!board[kingX][kingY + 1].getOwner().isPlayerOne())
                     numOfThreats++;
             }
             if (board[kingX - 1][kingY] instanceof Pawn) {
-                if (board[kingX - 1][kingY].getOwner().isPlayerOne())
+                if (!board[kingX - 1][kingY].getOwner().isPlayerOne())
                     numOfThreats++;
             }
             if (board[kingX + 1][kingY] instanceof Pawn) {
-                if (board[kingX + 1][kingY].getOwner().isPlayerOne())
+                if (!board[kingX + 1][kingY].getOwner().isPlayerOne())
                     numOfThreats++;
             }
         }else {
             numOfThreats++;
 
             if (this.insideBoard(kingX,kingY - 1)&& board[kingX][kingY - 1] instanceof Pawn) {
-                if (board[kingX][kingY - 1].getOwner().isPlayerOne()) {
+                if (!board[kingX][kingY - 1].getOwner().isPlayerOne()) {
                     numOfThreats++;
                 }
             }
             if (this.insideBoard(kingX,kingY + 1)&&board[kingX][kingY + 1] instanceof Pawn) {
-                if (board[kingX][kingY + 1].getOwner().isPlayerOne())
+                if (!board[kingX][kingY + 1].getOwner().isPlayerOne())
                     numOfThreats++;
             }
             if (this.insideBoard(kingX-1,kingY)&&board[kingX - 1][kingY] instanceof Pawn) {
-                if (board[kingX - 1][kingY].getOwner().isPlayerOne())
+                if (!board[kingX - 1][kingY].getOwner().isPlayerOne())
                     numOfThreats++;
             }
             if (this.insideBoard(kingX+1,kingY)&&board[kingX + 1][kingY] instanceof Pawn) {
-                if (board[kingX + 1][kingY].getOwner().isPlayerOne())
+                if (!board[kingX + 1][kingY].getOwner().isPlayerOne())
                     numOfThreats++;
             }}
 
         if (numOfThreats == 4) {
             this.isGameFinished = true;
             attacker.updateWins();
-            printStats(true);
-            this.reset();
+            printStats(attacker.isPlayerOne());
+            //attacker win
 
         }
-        //add corners
 
 
 
@@ -568,12 +634,12 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public Player getFirstPlayer() {
-        return defender;
+        return attacker;
     }
 
     @Override
     public Player getSecondPlayer() {
-        return attacker;
+        return defender;
     }
 
     @Override
@@ -630,7 +696,7 @@ public class GameLogic implements PlayableLogic {
         board[5][9] = new Pawn(attacker, new Position(5, 9), pawnNumber);
         pawnNumber++;
         for (int i = 3; i <= 7; i++) {
-            board[i][10] = new Pawn(attacker, new Position(i, 0), pawnNumber);
+            board[i][10] = new Pawn(attacker, new Position(i, 10), pawnNumber);
             pawnNumber++;
         }
 
@@ -669,6 +735,7 @@ public class GameLogic implements PlayableLogic {
             }
 
         }
+
     }
 
 

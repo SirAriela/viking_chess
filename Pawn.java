@@ -21,8 +21,8 @@ public class Pawn extends ConcretePiece {
     }
 
     public void upDatePositions(Position position) {
-        currentPosition = position;
-        locations.add(position);
+        this.currentPosition = position;
+        this.locations.add(position);
     }
 
 
@@ -45,13 +45,17 @@ public class Pawn extends ConcretePiece {
 
     public void typeAndNumber() {
         if (this.getOwner().isPlayerOne()) {
-            System.out.print("A" + this.pawnNumber + ":");
-        } else System.out.print("D" + this.pawnNumber + ":");
+            System.out.print("D" + this.pawnNumber + ":");
+        } else System.out.print("A" + this.pawnNumber + ":");
     }
 
     public ArrayList<Position> getList() {
-        return locations;
+        return this.locations;
 
+    }
+
+    public int getPawnNumber(){
+        return this.pawnNumber;
     }
 
     void printLocations() {
@@ -64,7 +68,7 @@ public class Pawn extends ConcretePiece {
             Position p = (Position) i.next();
             System.out.print(p.toString());
             if (!p.toString().equals(last.toString())) {
-                System.out.print(",");
+                System.out.print(", ");
             }
         }
         System.out.println("]");

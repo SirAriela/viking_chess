@@ -26,6 +26,9 @@ public class King extends ConcretePiece {
         System.out.print("K7:");
     }
 
+    public int getPawnNumber(){
+        return  7;
+    }
     void printLocations() {
         typeAndNumber();
         System.out.print(" [");
@@ -36,14 +39,14 @@ public class King extends ConcretePiece {
             Position p = (Position) i.next();
             System.out.print(p.toString());
             if (!p.toString().equals(last.toString())) {
-                System.out.print(",");
+                System.out.print(", ");
             }
         }
         System.out.println("]");
     }
 
     public Position getCurrentPosition() {
-        return currentPosition;
+        return this.currentPosition;
     }
 
     public void upDateDistance(int distance) {
@@ -52,7 +55,7 @@ public class King extends ConcretePiece {
 
 
     public ArrayList<Position> getList() {
-        return locations;
+        return this.locations;
 
     }
 

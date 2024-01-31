@@ -19,7 +19,6 @@ public class ConcretePlayer implements Player {
     }
     @Override
     public int getWins() {
-        // TODO Auto-generated method stub
         return this.wins;
     }
 
