@@ -1,0 +1,3 @@
+https://github.com/SirAriela/viking_chess.git
+1ec72bf
+319049060 206862666
