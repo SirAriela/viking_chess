@@ -415,7 +415,7 @@ public class GameLogic implements PlayableLogic {
                     temp.upDatePositions(b);
                     board[b.getpositionX()][b.getpositionY()] = board[a.getpositionX()][a.getpositionY()];
                     board[a.getpositionX()][a.getpositionY()] = null;
-                    locations[b.getpositionX()][b.getpositionY()]++;
+
 
 
                     if (isEdge(b.getpositionX(), b.getpositionY())) {// means the king get to the edge and defenders won
